@@ -13,6 +13,8 @@ public class Main
 	{
 		try
 		{
+			Scanner scanner = new Scanner(System.in);
+			
 			Path sourcePath = FileSystems.getDefault().getPath("Examples/file1.txt");
 			Path destPath = FileSystems.getDefault().getPath("Examples/file1_copy.txt");
 			
@@ -24,17 +26,25 @@ public class Main
 			else
 			{
 				System.out.println("File: " + destPath.toAbsolutePath() + " is already exists. \nOverwrite? Y/N");
-				Scanner scanner = new Scanner(System.in);
 				if (scanner.nextLine().equalsIgnoreCase("y"))
 				{
 					Files.copy(sourcePath, destPath, StandardCopyOption.REPLACE_EXISTING);
 					System.out.println("File is overwritten");
 				}
 			}
+			System.out.println("Coping Dir1 -> Dir 4");
 			
 			sourcePath = FileSystems.getDefault().getPath("Examples", "Dir1");
 			destPath = FileSystems.getDefault().getPath("Examples", "Dir4");
 			Files.copy(sourcePath, destPath, StandardCopyOption.REPLACE_EXISTING);
+			
+			//scanner.reset();
+			System.out.println("Delete Dir4? Y/N?");
+			if (scanner.nextLine().equalsIgnoreCase("y"))
+			{
+				Files.delete(destPath);
+				System.out.println("Dir4 is deleted");
+			}
 		}
 		catch (IOException e)
 		{
