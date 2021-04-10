@@ -1,34 +1,49 @@
 package com.kostyukov;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Scanner;
 
 public class Main
 {
 	public static void main(String[] args)
 	{
-		Path path = FileSystems.getDefault().getPath("WorkingDirectoryFile.txt");
-		printFile(path);
-		System.out.println(path.toAbsolutePath());
-		path = FileSystems.getDefault().getPath("files\\SubdirectoryFile.txt");
-		printFile(path);
-		System.out.println(path.toAbsolutePath());
-		path = FileSystems.getDefault().getPath("C:\\Projects\\Java\\OutsideLocalFile.txt");
-		printFile(path);
-		System.out.println(path.toAbsolutePath());
-	}
-	
-	private static void printFile(Path path)
-	{
-		try(BufferedReader fileReader = Files.newBufferedReader(path))
+		try
 		{
-			String line;
-			while ((line = fileReader.readLine()) != null)
+			Scanner scanner = new Scanner(System.in);
+			
+			Path sourcePath = FileSystems.getDefault().getPath("Examples/file1.txt");
+			Path destPath = FileSystems.getDefault().getPath("Examples/file1_copy.txt");
+			
+			if (Files.exists(sourcePath) && Files.notExists(destPath))
 			{
-				System.out.println(line);
+				Files.copy(sourcePath, destPath);
+				System.out.println("File: " + sourcePath.toAbsolutePath() + " is copied successfully");
+			}
+			else
+			{
+				System.out.println("File: " + destPath.toAbsolutePath() + " is already exists. \nOverwrite? Y/N");
+				if (scanner.nextLine().equalsIgnoreCase("y"))
+				{
+					Files.copy(sourcePath, destPath, StandardCopyOption.REPLACE_EXISTING);
+					System.out.println("File is overwritten");
+				}
+			}
+			System.out.println("Coping Dir1 -> Dir 4");
+			
+			sourcePath = FileSystems.getDefault().getPath("Examples", "Dir1");
+			destPath = FileSystems.getDefault().getPath("Examples", "Dir4");
+			Files.copy(sourcePath, destPath, StandardCopyOption.REPLACE_EXISTING);
+			
+			//scanner.reset();
+			System.out.println("Delete Dir4? Y/N?");
+			if (scanner.nextLine().equalsIgnoreCase("y"))
+			{
+				Files.delete(destPath);
+				System.out.println("Dir4 is deleted");
 			}
 		}
 		catch (IOException e)
