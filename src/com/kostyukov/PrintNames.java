@@ -1,0 +1,31 @@
+package com.kostyukov;
+
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+
+public class PrintNames extends SimpleFileVisitor<Path>
+{
+	@Override
+	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+	{
+		System.out.println(file.toAbsolutePath());
+		return FileVisitResult.CONTINUE;
+	}
+	
+	@Override
+	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+	{
+		System.out.println(dir.toAbsolutePath());
+		return FileVisitResult.CONTINUE;
+	}
+	
+	@Override
+	public FileVisitResult visitFileFailed(Path file, IOException exc)
+	{
+		System.out.println("Error accessing file: " + file.toAbsolutePath());
+		return FileVisitResult.CONTINUE;
+	}
+}

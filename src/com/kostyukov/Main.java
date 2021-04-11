@@ -1,63 +1,55 @@
 package com.kostyukov;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.Scanner;
+import java.nio.file.*;
 
 public class Main
 {
 	public static void main(String[] args)
 	{
+		Path directory = FileSystems.getDefault().getPath("Examples");
+		DirectoryStream.Filter<Path> filter = entry -> Files.isDirectory(entry) || Files.isRegularFile(entry);
+		
+		try (DirectoryStream<Path> content = Files.newDirectoryStream(directory, filter))
+		{
+			for (Path path : content)
+			{
+				System.out.println(path.getFileName());
+			}
+		}
+		catch (IOException | DirectoryIteratorException e)
+		{
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		
 		try
 		{
-			Scanner scanner = new Scanner(System.in);
-			
-			System.out.print("Coping file1.txt from ./Examples dir\nEnter a new file's name: ");
-			
-			Path sourcePath = FileSystems.getDefault().getPath("Examples/file1.txt");
-			Path destPath = FileSystems.getDefault().getPath("Examples/" + scanner.nextLine());
-			
-			if (Files.exists(sourcePath) && Files.notExists(destPath))
-			{
-				Files.copy(sourcePath, destPath);
-				System.out.println("File: " + sourcePath.toAbsolutePath() + " is copied successfully");
-			}
-			else
-			{
-				System.out.println("File: " + destPath.toAbsolutePath() + " is already exists. \nOverwrite? Y/N");
-				if (scanner.nextLine().equalsIgnoreCase("y"))
-				{
-					Files.copy(sourcePath, destPath, StandardCopyOption.REPLACE_EXISTING);
-					System.out.println("File is overwritten");
-				}
-			}
-			
-			System.out.println("Rename " + destPath.getFileName() + "? Y/N");
-			
-			if (scanner.nextLine().equalsIgnoreCase("y"))
-			{
-				System.out.print("Enter a new file name: ");
-				sourcePath = destPath;
-				destPath = FileSystems.getDefault().getPath("Examples", scanner.nextLine());
-				Files.move(sourcePath, destPath);
-			}
-			
-			System.out.println("Coping Dir1 -> Dir 4");
-			
-			sourcePath = FileSystems.getDefault().getPath("Examples", "Dir1");
-			destPath = FileSystems.getDefault().getPath("Examples", "Dir4");
-			Files.copy(sourcePath, destPath, StandardCopyOption.REPLACE_EXISTING);
-			
-			//scanner.reset();
-			System.out.println("Delete Dir4? Y/N?");
-			if (scanner.nextLine().equalsIgnoreCase("y"))
-			{
-				Files.delete(destPath);
-				System.out.println("Dir4 is deleted");
-			}
+			Path tempFile = Files.createTempFile("myapp", ".appdat");
+			System.out.println(tempFile.toAbsolutePath());
+		}
+		catch (IOException e)
+		{
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		Iterable<FileStore> stores = FileSystems.getDefault().getFileStores();
+		for (FileStore store : stores)
+		{
+			System.out.println(store);
+		}
+		
+		Iterable<Path> rootPaths = FileSystems.getDefault().getRootDirectories();
+		for (Path root: rootPaths)
+		{
+			System.out.println(root);
+		}
+		
+		System.out.println("Walking tree for ./Examples folder");
+		try
+		{
+			Files.walkFileTree(directory, new PrintNames());
 		}
 		catch (IOException e)
 		{
