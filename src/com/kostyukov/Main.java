@@ -15,8 +15,10 @@ public class Main
 		{
 			Scanner scanner = new Scanner(System.in);
 			
+			System.out.print("Coping file1.txt from ./Examples dir\nEnter a new file's name: ");
+			
 			Path sourcePath = FileSystems.getDefault().getPath("Examples/file1.txt");
-			Path destPath = FileSystems.getDefault().getPath("Examples/file1_copy.txt");
+			Path destPath = FileSystems.getDefault().getPath("Examples/" + scanner.nextLine());
 			
 			if (Files.exists(sourcePath) && Files.notExists(destPath))
 			{
@@ -32,6 +34,17 @@ public class Main
 					System.out.println("File is overwritten");
 				}
 			}
+			
+			System.out.println("Rename " + destPath.getFileName() + "? Y/N");
+			
+			if (scanner.nextLine().equalsIgnoreCase("y"))
+			{
+				System.out.print("Enter a new file name: ");
+				sourcePath = destPath;
+				destPath = FileSystems.getDefault().getPath("Examples", scanner.nextLine());
+				Files.move(sourcePath, destPath);
+			}
+			
 			System.out.println("Coping Dir1 -> Dir 4");
 			
 			sourcePath = FileSystems.getDefault().getPath("Examples", "Dir1");
